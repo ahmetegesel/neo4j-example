@@ -1,0 +1,35 @@
+{
+  "name": "neo4j-example",
+  "version": "1.0.0",
+  "description": "Experimenting Neo4j in nodejs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ahmetegesel:Vince-Carter-15@github.com/ahmetegesel/neo4j-example.git"
+  },
+  "keywords": [
+    "neo4j",
+    "graph",
+    "graphdb",
+    "nodejs",
+    "node",
+    "js",
+    "rdbms"
+  ],
+  "author": "Ahmet Egesel <ahmetegesel@hotmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ahmetegesel/neo4j-example/issues"
+  },
+  "homepage": "https://github.com/ahmetegesel/neo4j-example#readme",
+  "dependencies": {
+    "neo4j-driver": "^4.1.0",
+    "ramda": "^0.27.0"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  }
+}
