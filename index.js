@@ -1,29 +1,55 @@
-const { config } = require('dotenv');
-const neo4j = require('neo4j-driver');
-const { head, map, tap, type, path } = require('ramda');
+import { mapRelation } from './lib/mapRelation';
 
-config();
+require('dotenv').config();
+import neo4j from 'neo4j-driver';
 
-const driver = neo4j.driver(process.env.NEO4J_URL, neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD));
-const session = driver.session();
-
-const isNeoInt = neo4j.types.Integer.isInteger;
-const toNumber = i => i.toNumber();
+import mapNodeResult from './lib/mapNodeResult';
 
 (async () => {
+  const driver = neo4j.driver(process.env.NEO4J_URL, neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD));
+  const session = driver.session();
+
   try {
+
     const result = await session.run(
-      'MATCH (movie:Movie {title: \'Top Gun\'}) <- [:DIRECTED] - (person:Person) RETURN person, movie'
+      'MATCH (p:Person)-[r:DIRECTED]->(m:Movie) RETURN m,p LIMIT 2'
     );
 
-    return head(map((r) => r.toObject(), result.records));
+    return mapNodeResult('p', result.records, [
+        mapRelation(
+          [
+            'movie',
+            (item) => ({ tagline: item.tagline, title: item.title }),
+          ],
+          'm'
+        ),
+      ]
+    )
   } finally {
     await session.close();
+    await driver.close();
   }
-})()
-  .then(r => {
-      console.log(isNeoInt(path(['person', 'identity'], r)));
-      return r;
+})().then(console.log);
+
+/*
+* Result would be something like this:
+*
+[
+  {
+    name: 'Robert Zemeckis',
+    born: '1951',
+    movie: {
+      tagline: 'This Holiday Season… Believe',
+      title: 'The Polar Express'
     }
-  )
-  .then(console.log).finally(() => driver.close());
+  },
+  {
+    name: 'Penny Marshall',
+    born: '1943',
+    movie: {
+      tagline: 'Once in a lifetime you get a chance to do something different.',
+      title: 'A League of Their Own'
+    }
+  }
+]
+* */
