@@ -17,11 +17,11 @@ import mapNodeResult from './lib/mapNodeResult';
 
     return mapNodeResult('p', result.records, [
         mapRelation(
+          'm',
           [
             'movie',
             (item) => ({ tagline: item.tagline, title: item.title }),
           ],
-          'm'
         ),
       ]
     )
